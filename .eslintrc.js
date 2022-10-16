@@ -4,10 +4,12 @@ module.exports = {
     project: 'tsconfig.json',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'import'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
   root: true,
   env: {
@@ -16,9 +18,36 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js'],
   rules: {
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/consistent-type-imports': [2, { prefer: 'type-imports' }],
+    '@typescript-eslint/no-inferrable-types': [2, { ignoreParameters: true }],
+    'import/order': [
+      2,
+      {
+        groups: ['type', 'external', 'internal', 'builtin', 'parent', 'sibling', 'index'],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
+    '@typescript-eslint/interface-name-prefix': 0,
+    '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/explicit-module-boundary-types': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-unused-vars': [1, { argsIgnorePattern: '^_', ignoreRestSiblings: true }],
   },
-};
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', 'src/'],
+      },
+      typescript: {},
+    },
+  },
+}

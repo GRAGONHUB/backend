@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, BeforeInsert, BeforeUpdate } from 'typeorm'
 import * as bcrypt from 'bcrypt'
+import { Exclude } from 'class-transformer'
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
-export enum PROVIDER {
+export enum Provider {
   LOCAL = 'local',
   FACEBOOK = 'facebook',
   LINE = 'line',
@@ -9,19 +10,27 @@ export enum PROVIDER {
   APPLE = 'apple',
 }
 
-@Entity()
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
+  @Column({ unique: true })
   email: string
 
   @Column()
+  @Exclude()
   password: string
 
-  @Column()
-  provider: string
+  @Column({ unique: true })
+  username: string
+
+  @Column({
+    type: 'enum',
+    enum: Provider,
+    default: Provider.LOCAL,
+  })
+  provider: Provider
 
   @BeforeInsert() async hashPassword() {
     if (this.password) this.password = await bcrypt.hash(this.password, 10)

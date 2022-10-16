@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common'
+import { ClassSerializerInterceptor, Module, ValidationPipe } from '@nestjs/common'
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
-import { GraphQLModule } from '@nestjs/graphql'
 
 import configuration from './config/configuration'
 import connectionOptions from './config/typeorm'
@@ -17,14 +17,21 @@ import { AuthModule } from './modules/auth/auth.module'
     }),
     TypeOrmModule.forRoot(connectionOptions),
     AuthModule,
-    // GraphQLModule.forRoot({
-    //   debug: false,
-    //   playground: true,
-    //   typePaths: ['./**/*.graphql'],
-    //   context: ({ req }) => ({ req }),
-    // }),
   ],
-  // controllers: [AppController],
-  // providers: [AppService],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useFactory: () =>
+        new ValidationPipe({
+          transform: true,
+          forbidUnknownValues: true,
+          whitelist: true,
+        }),
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+  ],
 })
 export class AppModule {}

@@ -14,7 +14,7 @@ async function bootstrap() {
   app.use(helmet())
   if (process.env.MODE !== 'production') {
     const options = new DocumentBuilder()
-      .setTitle('Amarin Readme api module')
+      .setTitle('Api module')
       .setDescription('The module APIs documents')
       .setVersion('1.0')
       .addBearerAuth()
