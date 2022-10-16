@@ -1,8 +1,9 @@
 import type { SignInPasswordDto } from './dto/sign-in.dto'
 import type { SignUpDto } from './dto/sign-up.dto'
 
-import { ConflictException, Injectable } from '@nestjs/common'
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import * as bcrypt from 'bcrypt'
 import { Repository } from 'typeorm'
 
 import { User } from 'src/entities'
@@ -23,6 +24,11 @@ export class AuthService {
   }
 
   async login(dto: SignInPasswordDto) {
-    return { success: true }
+    const { email, password } = dto
+    const userEntity = await this.usersRepository.findOne({ email: email.toLocaleLowerCase() })
+    if (!userEntity) throw new NotFoundException('username or password invalid')
+    const isPasswordValidate = await bcrypt.compare(password, userEntity.password)
+    if (!isPasswordValidate) throw new NotFoundException('username or password invalid')
+    return { success: true, user: userEntity }
   }
 }
