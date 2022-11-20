@@ -1,11 +1,10 @@
 import { ClassSerializerInterceptor, Module, ValidationPipe } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule } from '@nestjs/config'
 
 import configuration from './config/configuration'
 import connectionOptions from './config/typeorm'
-
 import { AuthModule } from './modules/auth/auth.module'
 
 @Module({

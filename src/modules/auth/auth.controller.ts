@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { AuthService } from './auth.service'
 import { SignInPasswordDto } from './dto/sign-in.dto'
@@ -9,6 +10,13 @@ import { SignUpDto } from './dto/sign-up.dto'
 @ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('me')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  async me() {
+    return 'test'
+  }
 
   @Post('sign-in')
   async signIn(@Body() dto: SignInPasswordDto) {
