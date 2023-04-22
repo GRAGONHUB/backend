@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import { AuthService } from './auth.service'
+import { ForgetPasswordDto } from './dto/forget-password.dto'
 import { SignInPasswordDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
 
@@ -14,8 +15,8 @@ export class AuthController {
   @Get('me')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  async me() {
-    return 'test'
+  async me(@Req() req: any) {
+    return { success: true, user: req.user }
   }
 
   @Post('sign-in')
@@ -26,5 +27,10 @@ export class AuthController {
   @Post('sign-up')
   async signUp(@Body() dto: SignUpDto) {
     return this.authService.createUser(dto)
+  }
+
+  @Post('forget-password')
+  async forgetPassword(@Body() dto: ForgetPasswordDto) {
+    return this.authService.forgetPassword(dto)
   }
 }

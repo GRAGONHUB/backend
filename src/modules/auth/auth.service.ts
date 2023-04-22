@@ -1,3 +1,4 @@
+import type { ForgetPasswordDto } from './dto/forget-password.dto'
 import type { SignInPasswordDto } from './dto/sign-in.dto'
 import type { SignUpDto } from './dto/sign-up.dto'
 
@@ -22,7 +23,13 @@ export class AuthService {
     const userEntity = await this.usersRepository.findOne({ where: [{ email }, { username }] })
     if (userEntity) throw new ConflictException('duplicate username or email')
     const user = this.usersRepository.create(dto)
-    return this.usersRepository.save(user)
+    const userSaved = this.usersRepository.save(user)
+    return { success: true, user: userSaved }
+  }
+
+  async forgetPassword(dto: ForgetPasswordDto) {
+    console.log('🚀 ~ file: auth.service.ts:31 ~ AuthService ~ forgetPassword ~ dto:', dto)
+    return true
   }
 
   async login(dto: SignInPasswordDto) {
